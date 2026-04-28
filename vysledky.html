@@ -458,13 +458,21 @@
       <div id="projektRatings"></div>
     </div>
 
-    <!-- EXPORT -->
+    <!-- EXPORT + VYCISTIT -->
     <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
       <div>
         <strong>Export dat</strong>
-        <p style="font-size:.88rem; color:var(--muted); margin-top:.2rem;">Stahni vsechny odpovedi jako CSV soubor</p>
+        <p style="font-size:.88rem; color:var(--muted); margin-top:.2rem;">Stáhni všechny odpovědi jako CSV soubor</p>
       </div>
-      <button class="btn-export" id="btnExport">&#11015;&#65039; Stahni CSV</button>
+      <button class="btn-export" id="btnExport">&#11015;&#65039; Stáhnout CSV</button>
+    </div>
+
+    <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; border: 2px solid #f8d7da;">
+      <div>
+        <strong style="color:#721c24;">Vyčistit databázi</strong>
+        <p style="font-size:.88rem; color:var(--muted); margin-top:.2rem;">Smaže všechny testovací odpovědi. Akci nelze vrátit zpět.</p>
+      </div>
+      <button class="btn-export" id="btnClear" style="background:#f8d7da; color:#721c24; border-color:#dc3545;">&#128465; Vyčistit data</button>
     </div>
 
   </main>
@@ -477,7 +485,7 @@
 
 <script type="module">
   import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getFirestore, collection, getDocs }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import { getFirestore, collection, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   // ════════════════════════════════════════════════════════════
   // KONFIGURACE – stejne hodnoty jako v index.html
@@ -598,9 +606,10 @@
   pinBtn.addEventListener('click', tryPin);
   pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPin(); });
 
+  const app = initializeApp(FIREBASE_CONFIG);
+  const db  = getFirestore(app);
+
   async function initDashboard() {
-    const app  = initializeApp(FIREBASE_CONFIG);
-    const db   = getFirestore(app);
 
     let docs;
     try {
@@ -672,6 +681,24 @@
 
     // CSV export
     document.getElementById('btnExport').addEventListener('click', () => exportCSV(docs));
+
+    // Vycistit databazi
+    document.getElementById('btnClear').addEventListener('click', async () => {
+      const pocet = docs.length;
+      if (!confirm(`Opravdu smazat všech ${pocet} odpovědí? Tuto akci nelze vrátit zpět.`)) return;
+      const btn = document.getElementById('btnClear');
+      btn.disabled = true;
+      btn.textContent = 'Mažu...';
+      try {
+        await Promise.all(docs.map(d => deleteDoc(doc(db, 'pruzkum', d.id))));
+        alert('Databáze vyčištěna. Stránka se obnoví.');
+        location.reload();
+      } catch (err) {
+        alert('Chyba při mazání: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '🗑 Vyčistit data';
+      }
+    });
   }
 
   // ════════════════════════════════════════════════════════════
