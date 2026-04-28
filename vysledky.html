@@ -249,6 +249,81 @@
       color: var(--muted);
     }
 
+    /* ── PIN GATE ───────────────────────────────── */
+    .pin-gate {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .pin-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .pin-logo {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: .25rem;
+    }
+    .pin-logo span { color: var(--green); }
+    .pin-subtitle {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+    }
+    .pin-input {
+      width: 100%;
+      padding: .85rem 1rem;
+      font-size: 1.5rem;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      letter-spacing: .3em;
+      text-align: center;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: .75rem;
+    }
+    .pin-input:focus { border-color: var(--blue); background: #fff; }
+    .pin-input.error { border-color: #dc3545; animation: shake .3s; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+    .pin-btn {
+      width: 100%;
+      padding: .85rem;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .pin-btn:hover { background: var(--blue-dark); }
+    .pin-error-msg {
+      color: #dc3545;
+      font-size: .82rem;
+      margin-top: .5rem;
+      min-height: 1.2em;
+    }
+
     /* ── LOADING ────────────────────────────────── */
     .loading {
       text-align: center;
@@ -295,15 +370,19 @@
 </head>
 <body>
 
-<!-- PRISTUP ODEPREN -->
-<div class="gate" id="accessDenied" style="display:none;">
-  <div class="gate-icon">&#128274;</div>
-  <h2>Pristup odepren</h2>
-  <p>Tato stranka je chranena. Pouzijte odkaz, ktery jste dostali.</p>
+<!-- PIN GATE -->
+<div class="pin-gate" id="pinGate">
+  <div class="pin-box">
+    <div class="pin-logo">Ostrovaci<span>.cz</span></div>
+    <div class="pin-subtitle">Dashboard pruzkumu &ndash; zadejte pristupovy kod</div>
+    <input class="pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="10" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
+    <button class="pin-btn" id="pinBtn">Vstoupit</button>
+    <div class="pin-error-msg" id="pinError"></div>
+  </div>
 </div>
 
 <!-- NACITANI -->
-<div id="loadingView">
+<div id="loadingView" style="display:none;">
   <header>
     <div class="header-inner">
       <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
@@ -413,10 +492,9 @@
   };
 
   // ════════════════════════════════════════════════════════════
-  // TOKEN DASHBOARDU – zmente na cokoliv tajneho
-  // URL: /vysledky?token=Ostrovaci2026
+  // PIN DASHBOARDU
   // ════════════════════════════════════════════════════════════
-  const DASHBOARD_TOKEN = "Ostrovaci2026";
+  const DASHBOARD_PIN = "213121";
 
   // ════════════════════════════════════════════════════════════
   // SEZNAM PROJEKTU – musi odpovidat index.html
@@ -498,15 +576,27 @@
   ]);
 
   // ═══════════════════════════════════════════════════
-  // TOKEN CHECK
+  // PIN CHECK
   // ═══════════════════════════════════════════════════
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('token') !== DASHBOARD_TOKEN) {
-    document.getElementById('loadingView').style.display = 'none';
-    document.getElementById('accessDenied').style.display = 'flex';
-  } else {
-    initDashboard();
+  const pinInput = document.getElementById('pinInput');
+  const pinBtn   = document.getElementById('pinBtn');
+  const pinError = document.getElementById('pinError');
+
+  function tryPin() {
+    if (pinInput.value === DASHBOARD_PIN) {
+      document.getElementById('pinGate').style.display = 'none';
+      document.getElementById('loadingView').style.display = 'block';
+      initDashboard();
+    } else {
+      pinInput.classList.add('error');
+      pinError.textContent = 'Nespravny kod. Zkuste znovu.';
+      pinInput.value = '';
+      setTimeout(() => pinInput.classList.remove('error'), 400);
+    }
   }
+
+  pinBtn.addEventListener('click', tryPin);
+  pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPin(); });
 
   async function initDashboard() {
     const app  = initializeApp(FIREBASE_CONFIG);
