@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vysledky pruzkumu | Ostrovaci</title>
+  <title>Výsledky průzkumu | Ostrováci</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
   <!-- WordCloud2 knihovna -->
@@ -178,7 +178,7 @@
       font-size: .9rem;
     }
 
-    /* ── NEJCASTEJSI SLOVA (fallback tabulka) ───── */
+    /* ── NEJČASTĚJŠÍ SLOVA (fallback tabulka) ───── */
     .top-words {
       margin-top: 1rem;
       display: flex;
@@ -373,25 +373,25 @@
 <!-- PIN GATE -->
 <div class="pin-gate" id="pinGate">
   <div class="pin-box">
-    <div class="pin-logo">Ostrovaci<span>.cz</span></div>
-    <div class="pin-subtitle">Dashboard pruzkumu &ndash; zadejte pristupovy kod</div>
+    <div class="pin-logo">Ostrováci<span>.cz</span></div>
+    <div class="pin-subtitle">Dashboard průzkumu &ndash; zadejte přístupový kód</div>
     <input class="pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="10" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
     <button class="pin-btn" id="pinBtn">Vstoupit</button>
     <div class="pin-error-msg" id="pinError"></div>
   </div>
 </div>
 
-<!-- NACITANI -->
+<!-- NAČÍTÁNÍ -->
 <div id="loadingView" style="display:none;">
   <header>
     <div class="header-inner">
-      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrováci<span>.cz</span></a>
       <span class="header-badge">Dashboard</span>
     </div>
   </header>
   <div class="loading">
     <div class="spinner"></div>
-    <p>Nacitani dat...</p>
+    <p>Načítání dat...</p>
   </div>
 </div>
 
@@ -399,7 +399,7 @@
 <div id="dashboard" style="display:none;">
   <header>
     <div class="header-inner">
-      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrováci<span>.cz</span></a>
       <span class="header-badge">&#128196; Dashboard</span>
     </div>
   </header>
@@ -410,11 +410,11 @@
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-num" id="statTotal">–</div>
-        <div class="stat-label">celkem odpovedi</div>
+        <div class="stat-label">celkem odpovědí</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="statLastDay">–</div>
-        <div class="stat-label">za posledni 24 hodin</div>
+        <div class="stat-label">za poslední 24 hodin</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="statZOstrova">–</div>
@@ -426,11 +426,20 @@
       </div>
     </div>
 
+    <!-- Z OSTROVA -->
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128205;</span>
+        Odkud respondenti
+      </div>
+      <div id="zOstrovaStats"></div>
+    </div>
+
     <!-- GENERACE -->
     <div class="card">
       <div class="section-title">
         <span class="section-icon">&#128101;</span>
-        Rozlozeni generaci
+        Rozložení generací
       </div>
       <div id="generaceStats"></div>
     </div>
@@ -438,27 +447,27 @@
     <!-- WORD CLOUDS -->
     <div class="wc-grid">
       <div class="wc-card">
-        <div class="wc-title">&#128172; Co ti v Ostrove chybi?</div>
+        <div class="wc-title">&#128172; Co ti v Ostrově chybí?</div>
         <canvas class="wordcloud" id="wcChybi" width="600" height="280"></canvas>
         <div class="top-words" id="topChybi"></div>
       </div>
       <div class="wc-card">
-        <div class="wc-title">&#128545; Co te stve?</div>
+        <div class="wc-title">&#128545; Co tě štve?</div>
         <canvas class="wordcloud" id="wcStve" width="600" height="280"></canvas>
         <div class="top-words" id="topStve"></div>
       </div>
     </div>
 
-    <!-- HODNOCENI PROJEKTU -->
+    <!-- HODNOCENÍ PROJEKTŮ -->
     <div class="card">
       <div class="section-title">
         <span class="section-icon">&#128203;</span>
-        Hodnoceni projektu
+        Hodnocení projektů
       </div>
       <div id="projektRatings"></div>
     </div>
 
-    <!-- EXPORT + VYCISTIT -->
+    <!-- EXPORT + VYČISTIT -->
     <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
       <div>
         <strong>Export dat</strong>
@@ -478,7 +487,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrovaci.cz</a> &ndash; interni dashboard pruzkumu</p>
+    <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrováci.cz</a> &ndash; interní dashboard průzkumu</p>
   </footer>
 </div><!-- /dashboard -->
 
@@ -488,7 +497,7 @@
   import { getFirestore, collection, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   // ════════════════════════════════════════════════════════════
-  // KONFIGURACE – stejne hodnoty jako v index.html
+  // KONFIGURACE – stejné hodnoty jako v index.html
   // ════════════════════════════════════════════════════════════
   const FIREBASE_CONFIG = {
     apiKey:            "AIzaSyAkdTBkiGyL7ijN-gqpvFOLy3BCAWNscvE",
@@ -505,7 +514,7 @@
   const DASHBOARD_PIN = "213121";
 
   // ════════════════════════════════════════════════════════════
-  // SEZNAM PROJEKTU – musi odpovidat index.html
+  // SEZNAM PROJEKTŮ – musí odpovídat index.html
   // ════════════════════════════════════════════════════════════
   const PROJEKTY = [
     { id: "p1", nazev: "Dostavba ZUŠ" },
@@ -513,7 +522,7 @@
     { id: "p3", nazev: "Sportovní hala" },
     { id: "p4", nazev: "Volnočasový areál za klášterem" },
     { id: "p5", nazev: "Sauna a zázemí koupaliště" },
-    { id: "p6", nazev: "Bezbariérový přístup na starou radnici" },
+    { id: "p6", nazev: "Bezbariérový přístup na Starou radnici" },
     { id: "p7", nazev: "Využití staré hasičárny pro kreativce" },
   ];
 
@@ -542,7 +551,7 @@
     'u','uz','v','ve','vice','viz',
     'vsak','vsechno','vsichni','vubec',
     'z','za','zde','ze','zda',
-    // Rozsirene
+    // Rozšířené
     'tady','ted','nyni','dnes','zitra','vcera','tehdy',
     'tedy','takze','totiz','tudiz','protoze','pokud','kdyz',
     'jestli','prestože','presto','nicmene','avsak','jenze',
@@ -554,9 +563,9 @@
     'nema','nemas','nemame','nemate','nemaji',
     'vice','mene','vic','min',
     'hodne','trochu','malo','velmi','dost','pouze','jeste',
-    // Casova slova
+    // Časová slova
     'rano','vecer','noc','den','tyden','mesic','rok',
-    // Kratke nicnevypovidajici
+    // Krátké nevypovídající
     'ac','af','ah','aj','al','am','an','ar','as','at','au','av','aw','ax','ay',
     'ba','be','bo','bu',
     'ca','co',
@@ -597,7 +606,7 @@
       initDashboard();
     } else {
       pinInput.classList.add('error');
-      pinError.textContent = 'Nespravny kod. Zkuste znovu.';
+      pinError.textContent = 'Nesprávný kód. Zkuste znovu.';
       pinInput.value = '';
       setTimeout(() => pinInput.classList.remove('error'), 400);
     }
@@ -617,7 +626,7 @@
       docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (err) {
       console.error(err);
-      document.querySelector('.loading p').textContent = 'Chyba pri nacitani dat: ' + err.message;
+      document.querySelector('.loading p').textContent = 'Chyba při načítání dat: ' + err.message;
       return;
     }
 
@@ -638,23 +647,38 @@
       d.projekty && Object.values(d.projekty).some(v => v !== null)
     ).length;
 
-    document.getElementById('statTotal').textContent     = total;
-    document.getElementById('statLastDay').textContent   = last24;
-    document.getElementById('statZOstrova').textContent  = zOstrovaCount;
+    document.getElementById('statTotal').textContent      = total;
+    document.getElementById('statLastDay').textContent    = last24;
+    document.getElementById('statZOstrova').textContent   = zOstrovaCount;
     document.getElementById('statWithRating').textContent = withRating;
 
-    // Generacni rozlozeni
+    // Z Ostrova / Odjinud
+    const zOstrovaEl = document.getElementById('zOstrovaStats');
+    const zAno = docs.filter(d => d.zOstrova === 'ano').length;
+    const zNe  = docs.filter(d => d.zOstrova === 'ne').length;
+    [['Z Ostrova', zAno], ['Odjinud', zNe]].forEach(([label, cnt]) => {
+      const pct = total ? Math.round((cnt / total) * 100) : 0;
+      zOstrovaEl.innerHTML += `
+        <div class="bar-row" style="margin-bottom:.55rem;">
+          <div class="bar-label" style="width:120px;">${label}</div>
+          <div class="bar-track" style="flex:1;"><div class="bar-fill up" style="width:${pct}%; background:var(--blue);"></div></div>
+          <div class="bar-pct">${pct}%</div>
+          <div class="bar-count">(${cnt})</div>
+        </div>`;
+    });
+
+    // Generační rozložení
     const genOrder = [
       'Gen Z (nar. 1997-2012)',
-      'Milennial (nar. 1981-1996)',
+      'Mileniál (nar. 1981-1996)',
       'Gen X (nar. 1965-1980)',
-      'Boomer (nar. pred 1965)',
+      'Boomer (nar. před 1965)',
     ];
     const genLabels = {
-      'Gen Z (nar. 1997-2012)':      'Gen Z (nar. 1997–2012)',
-      'Milennial (nar. 1981-1996)':  'Milennial (nar. 1981–1996)',
-      'Gen X (nar. 1965-1980)':      'Gen X (nar. 1965–1980)',
-      'Boomer (nar. pred 1965)':     'Boomer (nar. před 1965)',
+      'Gen Z (nar. 1997-2012)':     'Gen Z (nar. 1997–2012)',
+      'Mileniál (nar. 1981-1996)':  'Mileniál (nar. 1981–1996)',
+      'Gen X (nar. 1965-1980)':     'Gen X (nar. 1965–1980)',
+      'Boomer (nar. před 1965)':    'Boomer (nar. před 1965)',
     };
     const genCounts = {};
     genOrder.forEach(g => { genCounts[g] = 0; });
@@ -676,13 +700,13 @@
     renderWordCloud(docs, 'chybi', 'wcChybi', 'topChybi');
     renderWordCloud(docs, 'stve',  'wcStve',  'topStve');
 
-    // Hodnoceni projektu
+    // Hodnocení projektů
     renderProjectRatings(docs);
 
     // CSV export
     document.getElementById('btnExport').addEventListener('click', () => exportCSV(docs));
 
-    // Vycistit databazi
+    // Vyčistit databázi
     document.getElementById('btnClear').addEventListener('click', async () => {
       const pocet = docs.length;
       if (!confirm(`Opravdu smazat všech ${pocet} odpovědí? Tuto akci nelze vrátit zpět.`)) return;
@@ -705,7 +729,6 @@
   // WORD CLOUD
   // ════════════════════════════════════════════════════════════
   function splitItems(text) {
-    // Rozdeli text podle carky, stredniku nebo noveho radku na jednotlive polozky
     return text
       .split(/[,;\n]+/)
       .map(s => s.trim().toLowerCase().replace(/[^\wáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]/g, '').trim())
@@ -719,10 +742,8 @@
       if (!d[field]) return;
       const items = splitItems(d[field]);
       items.forEach(item => {
-        // Filtruj polozky ktere jsou pouze stopslova nebo prilis kratke
         const words = item.split(/\s+/).filter(w => w.length >= 2 && !STOP.has(w));
         if (words.length === 0) return;
-        // Pouzij cely item jako frazi (max 4 slova, jinak vezmi jen smysluplna slova)
         const phrase = words.length <= 4 ? words.join(' ') : words.slice(0, 3).join(' ');
         freq[phrase] = (freq[phrase] || 0) + 1;
       });
@@ -738,7 +759,7 @@
 
     if (freq.length === 0) {
       canvas.style.display = 'none';
-      topEl.innerHTML = '<span style="color:var(--muted);font-size:.9rem">Zatim zadne odpovedi.</span>';
+      topEl.innerHTML = '<span style="color:var(--muted);font-size:.9rem">Zatím žádné odpovědi.</span>';
       return;
     }
 
@@ -752,9 +773,8 @@
       topEl.appendChild(pill);
     });
 
-    // Word cloud (pokud WordCloud dostupny)
+    // Word cloud (pokud WordCloud dostupný)
     if (typeof WordCloud === 'function') {
-      // Nastav explicitni rozmery canvasu
       const maxW = canvas.parentElement.clientWidth || 480;
       canvas.width  = maxW;
       canvas.height = 280;
@@ -780,7 +800,7 @@
   }
 
   // ════════════════════════════════════════════════════════════
-  // PROJECT RATINGS
+  // HODNOCENÍ PROJEKTŮ
   // ════════════════════════════════════════════════════════════
   function renderProjectRatings(docs) {
     const el = document.getElementById('projektRatings');
@@ -803,11 +823,11 @@
         <div class="project-row-name">${p.nazev}</div>
         <div class="bars">
           ${barRow('up',    '&#128077; Palec nahoru', pct('up'),    counts.up)}
-          ${barRow('down',  '&#128078; Palec dolu',   pct('down'),  counts.down)}
-          ${barRow('dunno', '&#129335; Nevim o tom',  pct('dunno'), counts.dunno)}
+          ${barRow('down',  '&#128078; Palec dolů',   pct('down'),  counts.down)}
+          ${barRow('dunno', '&#129335; Nevím',         pct('dunno'), counts.dunno)}
         </div>
         <div style="font-size:.78rem; color:var(--muted); margin-top:.4rem;">
-          Celkem hodnoceni: <strong>${total}</strong>
+          Celkem hodnocení: <strong>${total}</strong>
         </div>`;
       el.appendChild(div);
     });
@@ -829,7 +849,7 @@
   function exportCSV(docs) {
     const projNames = PROJEKTY.map(p => `"${p.nazev}"`).join(',');
     const rows = [
-      `"ID","Z Ostrova","Generace","Chybi","Stve",${projNames},"Timestamp"`,
+      `"ID","Z Ostrova","Generace","Chybí","Štve",${projNames},"Timestamp"`,
     ];
     docs.forEach(d => {
       const ts = d.timestamp
