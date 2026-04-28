@@ -387,6 +387,42 @@
     }
     footer a { color: var(--blue); text-decoration: none; }
 
+    /* ── GENERACE TLACITKA ──────────────────────── */
+    .gen-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+      margin-top: .5rem;
+    }
+    .gen-group input[type="radio"] { display: none; }
+    .gen-group label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .25rem;
+      padding: .9rem .5rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+    .gen-group label .gen-emoji { font-size: 1.6rem; line-height: 1; }
+    .gen-group label .gen-name  { font-size: .95rem; font-weight: 700; color: var(--text); }
+    .gen-group label .gen-years { font-size: .75rem; color: var(--muted); }
+    .gen-group input[type="radio"]:checked + label {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .gen-group input[type="radio"]:checked + label .gen-name  { color: #fff; }
+    .gen-group input[type="radio"]:checked + label .gen-years { color: rgba(255,255,255,.75); }
+    .gen-group label:hover { border-color: var(--blue); }
+
     /* ── RADIO TLACITKA ─────────────────────────── */
     .radio-group {
       display: flex;
@@ -465,15 +501,31 @@
 
       <div class="field" style="margin-bottom:0;">
         <label>Ke které generaci patříš?</label>
-        <div class="radio-group">
+        <div class="gen-group">
           <input type="radio" name="generace" id="gen-z" value="Gen Z (nar. 1997-2012)">
-          <label for="gen-z">Gen Z (nar. 1997–2012)</label>
+          <label for="gen-z">
+            <span class="gen-emoji">📱</span>
+            <span class="gen-name">Gen Z</span>
+            <span class="gen-years">nar. 1997–2012</span>
+          </label>
           <input type="radio" name="generace" id="gen-m" value="Mileniál (nar. 1981-1996)">
-          <label for="gen-m">Mileniál (nar. 1981–1996)</label>
+          <label for="gen-m">
+            <span class="gen-emoji">💻</span>
+            <span class="gen-name">Mileniál</span>
+            <span class="gen-years">nar. 1981–1996</span>
+          </label>
           <input type="radio" name="generace" id="gen-x" value="Gen X (nar. 1965-1980)">
-          <label for="gen-x">Gen X (nar. 1965–1980)</label>
+          <label for="gen-x">
+            <span class="gen-emoji">📼</span>
+            <span class="gen-name">Gen X</span>
+            <span class="gen-years">nar. 1965–1980</span>
+          </label>
           <input type="radio" name="generace" id="gen-b" value="Boomer (nar. před 1965)">
-          <label for="gen-b">Boomer (nar. před 1965)</label>
+          <label for="gen-b">
+            <span class="gen-emoji">📻</span>
+            <span class="gen-name">Boomer</span>
+            <span class="gen-years">nar. před 1965</span>
+          </label>
         </div>
         <div class="field-error" id="generaceError">Prosím vyberte možnost.</div>
       </div>
