@@ -306,10 +306,39 @@
     }
     footer a { color: var(--blue); text-decoration: none; }
 
+    /* ── RADIO TLACITKA ─────────────────────────── */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .5rem;
+    }
+    .radio-group input[type="radio"] { display: none; }
+    .radio-group label {
+      padding: .55rem 1.2rem;
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      background: var(--bg);
+      cursor: pointer;
+      font-weight: 400;
+      font-size: .95rem;
+      transition: all .15s;
+      margin-bottom: 0;
+    }
+    .radio-group input[type="radio"]:checked + label {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      font-weight: 500;
+    }
+    .radio-group label:hover { border-color: var(--blue); }
+
     @media (max-width: 480px) {
       .card { padding: 1.25rem; }
       .rating-btns { flex-direction: column; }
       .rbtn { width: 100%; text-align: left; }
+      .radio-group { flex-direction: column; }
+      .radio-group label { width: 100%; }
     }
   </style>
 </head>
@@ -334,6 +363,40 @@
   </div>
 
   <div id="formWrap">
+
+    <!-- UVODNI OTAZKY -->
+    <div class="card">
+      <h2 class="card-title">
+        <span class="card-icon">&#128100;</span>
+        Par otazek o tobe
+      </h2>
+
+      <div class="field">
+        <label>Jsi z Ostrova?</label>
+        <div class="radio-group">
+          <input type="radio" name="zOstrova" id="zOstrova-ano" value="ano">
+          <label for="zOstrova-ano">Ano</label>
+          <input type="radio" name="zOstrova" id="zOstrova-ne" value="ne">
+          <label for="zOstrova-ne">Ne</label>
+        </div>
+        <div class="field-error" id="zOstrovaError">Prosim vyberte moznost.</div>
+      </div>
+
+      <div class="field" style="margin-bottom:0;">
+        <label>Ke ktere generaci patris?</label>
+        <div class="radio-group">
+          <input type="radio" name="generace" id="gen-z" value="Gen Z (nar. 1997-2012)">
+          <label for="gen-z">Gen Z (nar. 1997–2012)</label>
+          <input type="radio" name="generace" id="gen-m" value="Milennial (nar. 1981-1996)">
+          <label for="gen-m">Milennial (nar. 1981–1996)</label>
+          <input type="radio" name="generace" id="gen-x" value="Gen X (nar. 1965-1980)">
+          <label for="gen-x">Gen X (nar. 1965–1980)</label>
+          <input type="radio" name="generace" id="gen-b" value="Boomer (nar. pred 1965)">
+          <label for="gen-b">Boomer (nar. před 1965)</label>
+        </div>
+        <div class="field-error" id="generaceError">Prosim vyberte moznost.</div>
+      </div>
+    </div>
 
     <!-- OTEVRENE OTAZKY -->
     <div class="card">
@@ -424,12 +487,12 @@
   const app = initializeApp(FIREBASE_CONFIG);
   const db  = getFirestore(app);
 
-  // Jeden hlas na prohlizec (localStorage)
+  // Jeden hlas na prohlizec (localStorage) – DOCASNE VYPNUTO pro testovani
   const DONE_KEY = 'ostrovaci_pruzkum_2026';
-  if (localStorage.getItem(DONE_KEY)) {
-    document.getElementById('alreadyBanner').classList.add('show');
-    document.getElementById('btnSend').disabled = true;
-  }
+  // if (localStorage.getItem(DONE_KEY)) {
+  //   document.getElementById('alreadyBanner').classList.add('show');
+  //   document.getElementById('btnSend').disabled = true;
+  // }
 
   // Vykreslit projekty
   const ratings = {};
@@ -473,16 +536,26 @@
 
   // Odeslani
   document.getElementById('btnSend').addEventListener('click', async () => {
-    const chybi = document.getElementById('chybi').value.trim();
-    const stve  = document.getElementById('stve').value.trim();
-    const errEl = document.getElementById('chybiError');
+    const chybi    = document.getElementById('chybi').value.trim();
+    const stve     = document.getElementById('stve').value.trim();
+    const zOstrova = document.querySelector('input[name="zOstrova"]:checked')?.value || null;
+    const generace = document.querySelector('input[name="generace"]:checked')?.value || null;
 
-    if (!chybi) {
-      errEl.classList.add('show');
-      document.getElementById('chybi').focus();
-      return;
-    }
-    errEl.classList.remove('show');
+    let ok = true;
+
+    const zOstrovaErr = document.getElementById('zOstrovaError');
+    if (!zOstrova) { zOstrovaErr.classList.add('show'); ok = false; }
+    else             zOstrovaErr.classList.remove('show');
+
+    const generaceErr = document.getElementById('generaceError');
+    if (!generace) { generaceErr.classList.add('show'); ok = false; }
+    else            generaceErr.classList.remove('show');
+
+    const chybiErr = document.getElementById('chybiError');
+    if (!chybi) { chybiErr.classList.add('show'); ok = false; }
+    else          chybiErr.classList.remove('show');
+
+    if (!ok) return;
 
     const btn     = document.getElementById('btnSend');
     const spinner = document.getElementById('spinner');
@@ -491,6 +564,8 @@
 
     try {
       await addDoc(collection(db, 'pruzkum'), {
+        zOstrova,
+        generace,
         chybi,
         stve,
         projekty:  ratings,

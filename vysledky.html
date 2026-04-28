@@ -338,13 +338,22 @@
         <div class="stat-label">za posledni 24 hodin</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num" id="statWithStve">–</div>
-        <div class="stat-label">vyplnilo "co stve"</div>
+        <div class="stat-num" id="statZOstrova">–</div>
+        <div class="stat-label">z Ostrova</div>
       </div>
       <div class="stat-card">
         <div class="stat-num" id="statWithRating">–</div>
         <div class="stat-label">hodnotilo projekty</div>
       </div>
+    </div>
+
+    <!-- GENERACE -->
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128101;</span>
+        Rozlozeni generaci
+      </div>
+      <div id="generaceStats"></div>
     </div>
 
     <!-- WORD CLOUDS -->
@@ -525,15 +534,44 @@
       const ts = d.timestamp.toMillis ? d.timestamp.toMillis() : (d.timestamp.seconds * 1000);
       return (now - ts) < day;
     }).length;
-    const withStve   = docs.filter(d => d.stve && d.stve.trim()).length;
+    const zOstrovaCount = docs.filter(d => d.zOstrova === 'ano').length;
     const withRating = docs.filter(d =>
       d.projekty && Object.values(d.projekty).some(v => v !== null)
     ).length;
 
-    document.getElementById('statTotal').textContent    = total;
-    document.getElementById('statLastDay').textContent  = last24;
-    document.getElementById('statWithStve').textContent = withStve;
+    document.getElementById('statTotal').textContent     = total;
+    document.getElementById('statLastDay').textContent   = last24;
+    document.getElementById('statZOstrova').textContent  = zOstrovaCount;
     document.getElementById('statWithRating').textContent = withRating;
+
+    // Generacni rozlozeni
+    const genOrder = [
+      'Gen Z (nar. 1997-2012)',
+      'Milennial (nar. 1981-1996)',
+      'Gen X (nar. 1965-1980)',
+      'Boomer (nar. pred 1965)',
+    ];
+    const genLabels = {
+      'Gen Z (nar. 1997-2012)':      'Gen Z (nar. 1997–2012)',
+      'Milennial (nar. 1981-1996)':  'Milennial (nar. 1981–1996)',
+      'Gen X (nar. 1965-1980)':      'Gen X (nar. 1965–1980)',
+      'Boomer (nar. pred 1965)':     'Boomer (nar. před 1965)',
+    };
+    const genCounts = {};
+    genOrder.forEach(g => { genCounts[g] = 0; });
+    docs.forEach(d => { if (d.generace && genCounts[d.generace] !== undefined) genCounts[d.generace]++; });
+    const genEl = document.getElementById('generaceStats');
+    genOrder.forEach(g => {
+      const cnt = genCounts[g];
+      const pct = total ? Math.round((cnt / total) * 100) : 0;
+      genEl.innerHTML += `
+        <div class="bar-row" style="margin-bottom:.55rem;">
+          <div class="bar-label" style="width:200px;">${genLabels[g]}</div>
+          <div class="bar-track" style="flex:1;"><div class="bar-fill up" style="width:${pct}%; background:var(--blue);"></div></div>
+          <div class="bar-pct">${pct}%</div>
+          <div class="bar-count">(${cnt})</div>
+        </div>`;
+    });
 
     // Word cloudy
     renderWordCloud(docs, 'chybi', 'wcChybi', 'topChybi');
@@ -657,10 +695,9 @@
   // CSV EXPORT
   // ════════════════════════════════════════════════════════════
   function exportCSV(docs) {
-    const projHeaders = PROJEKTY.map(p => p.id).join(',');
-    const projNames   = PROJEKTY.map(p => `"${p.nazev}"`).join(',');
+    const projNames = PROJEKTY.map(p => `"${p.nazev}"`).join(',');
     const rows = [
-      `"ID","Chybi","Stve",${projNames},"Timestamp"`,
+      `"ID","Z Ostrova","Generace","Chybi","Stve",${projNames},"Timestamp"`,
     ];
     docs.forEach(d => {
       const ts = d.timestamp
@@ -669,7 +706,7 @@
       const projVals = PROJEKTY.map(p =>
         `"${(d.projekty && d.projekty[p.id]) || ''}"`
       ).join(',');
-      rows.push(`"${d.id}","${escape(d.chybi)}","${escape(d.stve)}",${projVals},"${ts}"`);
+      rows.push(`"${d.id}","${d.zOstrova || ''}","${escape(d.generace)}","${escape(d.chybi)}","${escape(d.stve)}",${projVals},"${ts}"`);
     });
 
     const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
