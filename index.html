@@ -296,6 +296,87 @@
     }
     .success-card p { color: var(--muted); }
 
+    /* ── KONTAKTNI MODAL ────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6,61,122,.55);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      position: relative;
+    }
+    .modal-title {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.2rem;
+      color: var(--blue);
+      margin-bottom: 1.25rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-field { margin-bottom: 1rem; }
+    .modal-field label { display:block; font-size:.9rem; font-weight:500; margin-bottom:.35rem; }
+    .modal-field input,
+    .modal-field textarea {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: .9rem;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color .18s;
+    }
+    .modal-field input:focus,
+    .modal-field textarea:focus { outline:none; border-color:var(--blue); background:#fff; }
+    .modal-field textarea { min-height: 100px; resize: vertical; }
+    .btn-modal-send {
+      width: 100%;
+      padding: .85rem;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: .5rem;
+      transition: background .18s;
+    }
+    .btn-modal-send:hover { background: var(--green-dark); }
+    .btn-modal-send:disabled { opacity: .6; cursor: not-allowed; }
+    .modal-success {
+      text-align: center;
+      padding: 1.5rem 0;
+      display: none;
+    }
+    .modal-success .success-emoji { font-size: 3rem; margin-bottom: .75rem; }
+    .modal-success p { color: var(--muted); }
+
     /* ── FOOTER ─────────────────────────────────── */
     footer {
       text-align: center;
@@ -445,11 +526,42 @@
     <p>Tvoje odpověď byla odeslána. Výsledky průzkumu zveřejníme po spuštění kampaně.</p>
     <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:.75rem; align-items:center;">
       <a href="https://www.ostrovaci.cz" target="_blank" style="display:inline-block; background:var(--blue); color:#fff; padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:.95rem; text-decoration:none;">Navštívit www.ostrovaci.cz</a>
-      <p style="color:var(--muted); font-size:.95rem;">Chcete spolupracovat? <a href="mailto:mpolednicek@seznam.cz" style="color:var(--blue); font-weight:500;">Napište nám</a></p>
+      <p style="color:var(--muted); font-size:.95rem;">Chcete spolupracovat? <a href="#" id="openContact" style="color:var(--blue); font-weight:500;">Napište nám</a></p>
     </div>
   </div>
 
 </main>
+
+<!-- KONTAKTNI MODAL -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalForm">
+      <div class="modal-title">Napište nám</div>
+      <form id="contactForm">
+        <input type="hidden" name="access_key" value="81de3310-b045-444c-9442-8afd9de07a35">
+        <input type="hidden" name="subject" value="Zpráva z iostrov.cz – průzkum">
+        <div class="modal-field">
+          <label>Vaše jméno</label>
+          <input type="text" name="name" placeholder="Jan Novák" required>
+        </div>
+        <div class="modal-field">
+          <label>Váš email</label>
+          <input type="email" name="email" placeholder="jan@email.cz" required>
+        </div>
+        <div class="modal-field">
+          <label>Zpráva</label>
+          <textarea name="message" placeholder="Napište nám..." required></textarea>
+        </div>
+        <button class="btn-modal-send" type="submit">Odeslat zprávu</button>
+      </form>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-emoji">&#10003;</div>
+      <p>Zpráva odeslána. Ozveme se vám co nejdříve.</p>
+    </div>
+  </div>
+</div>
 
 <footer>
   <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrováci.cz</a> &ndash; Sdružení nezávislých kandidátů s podporou TOP09 a KDU-ČSL</p>
@@ -585,6 +697,48 @@
       spinner.classList.remove('show');
       btn.style.display = 'inline-block';
       alert('Chyba při odesílání. Zkontrolujte připojení a zkuste znovu.\n\n' + err.message);
+    }
+  });
+</script>
+
+<script>
+  // Kontaktni modal
+  const modal      = document.getElementById('contactModal');
+  const modalClose = document.getElementById('modalClose');
+  const openBtn    = document.getElementById('openContact');
+
+  if (openBtn) {
+    openBtn.addEventListener('click', e => {
+      e.preventDefault();
+      modal.classList.add('open');
+    });
+  }
+  modalClose.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+  // Odeslani pres web3forms
+  document.getElementById('contactForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Odesílám...';
+
+    const data = new FormData(e.target);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+      });
+      if (res.ok) {
+        document.getElementById('modalForm').style.display = 'none';
+        document.getElementById('modalSuccess').style.display = 'block';
+      } else {
+        throw new Error();
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Odeslat zprávu';
+      alert('Chyba při odesílání. Zkuste to prosím znovu.');
     }
   });
 </script>
