@@ -677,24 +677,68 @@
   // ════════════════════════════════════════════════════════════
   // WORD CLOUD
   // ════════════════════════════════════════════════════════════
-  function tokenize(text) {
+  function tokenizeRaw(text) {
+    // Vraci vsechna slova (vcetne stop slov) pro bigram detekci
     return text
       .toLowerCase()
       .replace(/[^\wáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]/g, ' ')
       .split(/\s+/)
-      .filter(w => w.length >= 3 && !STOP.has(w));
+      .filter(w => w.length >= 2);
+  }
+
+  function tokenize(text) {
+    return tokenizeRaw(text).filter(w => w.length >= 3 && !STOP.has(w));
   }
 
   function buildFrequency(docs, field) {
-    const freq = {};
+    const uniFreq   = {};  // jednotliva slova
+    const biFreq    = {};  // dvouslovna spojeni
+
     docs.forEach(d => {
       if (!d[field]) return;
-      tokenize(d[field]).forEach(w => {
-        freq[w] = (freq[w] || 0) + 1;
-      });
+      const raw    = tokenizeRaw(d[field]);
+      const tokens = tokenize(d[field]);
+
+      // Unigrams
+      tokens.forEach(w => { uniFreq[w] = (uniFreq[w] || 0) + 1; });
+
+      // Bigrams – obe slova musi byt mimo stop slova a mit 3+ znaky
+      for (let i = 0; i < raw.length - 1; i++) {
+        const a = raw[i], b = raw[i + 1];
+        if (a.length >= 3 && b.length >= 3 && !STOP.has(a) && !STOP.has(b)) {
+          const bigram = `${a} ${b}`;
+          biFreq[bigram] = (biFreq[bigram] || 0) + 1;
+        }
+      }
     });
-    return Object.entries(freq)
-      .sort((a, b) => b[1] - a[1]);
+
+    // Pouzij bigram misto jednotlivych slov pokud se opakuje 2x+
+    // a odeber ta jednotliva slova z unigrams
+    const usedInBigram = new Set();
+    const merged = { ...uniFreq };
+
+    Object.entries(biFreq).forEach(([bigram, cnt]) => {
+      if (cnt >= 2) {
+        merged[bigram] = cnt;
+        // Sniz vahu jednotlivych slov, ktera jsou soucasti bigramu
+        const [a, b] = bigram.split(' ');
+        usedInBigram.add(a);
+        usedInBigram.add(b);
+      }
+    });
+
+    // Slova pouzita v bigramech zobrazime jen pokud maji vyssi freq nez bigram
+    usedInBigram.forEach(w => {
+      const biMax = Math.max(
+        ...Object.entries(biFreq)
+          .filter(([bg]) => bg.startsWith(w + ' ') || bg.endsWith(' ' + w))
+          .map(([, c]) => c),
+        0
+      );
+      if (merged[w] && merged[w] <= biMax) delete merged[w];
+    });
+
+    return Object.entries(merged).sort((a, b) => b[1] - a[1]);
   }
 
   function renderWordCloud(docs, field, canvasId, topId) {
