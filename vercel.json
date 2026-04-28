@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/vysledky", "destination": "/vysledky.html" },
+    { "source": "/",         "destination": "/index.html" }
+  ]
+}

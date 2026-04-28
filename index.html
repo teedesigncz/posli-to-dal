@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rikni nam, co ti v Ostrove chybi a co te stve. Pruzkum verejneho mineni – Ostrovaci.">
+  <title>Rekni svuj nazor | Ostrovaci</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:        #0856A4;
+      --blue-dark:   #063d7a;
+      --blue-light:  #e8f0fb;
+      --green:       #76B82A;
+      --green-dark:  #5c9120;
+      --bg:          #f0f4f9;
+      --white:       #ffffff;
+      --text:        #1a2b3c;
+      --muted:       #5f6b7a;
+      --border:      #cdd8e8;
+      --radius:      14px;
+      --shadow:      0 4px 24px rgba(8,86,164,.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      background: var(--blue);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -.3px;
+    }
+    .logo span { color: #76B82A; }
+
+    /* ── HERO ───────────────────────────────────── */
+    .hero {
+      background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue) 55%, #1a6fc8 100%);
+      color: #fff;
+      padding: 3.5rem 1.5rem 4.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: 'Roboto Slab', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: .9rem;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .88;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+    }
+    .hero-arrow {
+      display: inline-block;
+      opacity: .65;
+      font-size: 1.6rem;
+      animation: bounce 1.6s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ── MAIN ───────────────────────────────────── */
+    main {
+      max-width: 700px;
+      margin: -2rem auto 3rem;
+      padding: 0 1.25rem;
+    }
+
+    /* ── CARD ───────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.2rem;
+      color: var(--blue);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--blue-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── FORM FIELDS ────────────────────────────── */
+    .field { margin-bottom: 1.4rem; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: .95rem;
+      margin-bottom: .45rem;
+    }
+    .optional {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: .82rem;
+      margin-left: .35rem;
+    }
+
+    textarea {
+      width: 100%;
+      padding: .85rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: .95rem;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+      min-height: 110px;
+      transition: border-color .18s, background .18s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: #fff;
+    }
+    textarea::placeholder { color: #9aabb8; }
+
+    .char-count {
+      text-align: right;
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: .25rem;
+    }
+
+    /* ── PROJECT CARDS ──────────────────────────── */
+    .projects-intro {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+    }
+    .project-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin-bottom: .75rem;
+      background: var(--bg);
+      transition: border-color .18s, background .18s;
+    }
+    .project-card.rated {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .project-name {
+      font-weight: 500;
+      font-size: .95rem;
+      margin-bottom: .7rem;
+    }
+    .rating-btns {
+      display: flex;
+      gap: .45rem;
+      flex-wrap: wrap;
+    }
+    .rbtn {
+      padding: .45rem .9rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Roboto', sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text);
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .rbtn:hover { border-color: var(--blue); }
+    .rbtn.sel-up    { background: #d4edda; border-color: #28a745; color: #155724; }
+    .rbtn.sel-down  { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+    .rbtn.sel-dunno { background: #fff3cd; border-color: #e0a800; color: #6b5200; }
+
+    /* ── SUBMIT ─────────────────────────────────── */
+    .submit-wrap {
+      text-align: center;
+      padding: .5rem 0;
+    }
+    .btn-send {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: .9rem 2.8rem;
+      border-radius: 50px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(118,184,42,.35);
+      transition: background .18s, transform .1s;
+    }
+    .btn-send:hover   { background: var(--green-dark); transform: translateY(-2px); }
+    .btn-send:active  { transform: translateY(0); }
+    .btn-send:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .submit-note {
+      margin-top: .75rem;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* ── INLINE MESSAGES ────────────────────────── */
+    .msg-warning {
+      background: #fff8e1;
+      border: 1.5px solid #ffc107;
+      border-radius: 10px;
+      padding: .9rem 1.1rem;
+      font-size: .91rem;
+      color: #7a5800;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .msg-warning.show { display: block; }
+
+    .field-error {
+      color: #c0392b;
+      font-size: .82rem;
+      margin-top: .3rem;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* ── SPINNER ────────────────────────────────── */
+    .spinner {
+      display: none;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+      margin: 0 auto;
+    }
+    .spinner.show { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SUCCESS ────────────────────────────────── */
+    .success-card {
+      text-align: center;
+      padding: 3rem 2rem;
+      display: none;
+    }
+    .success-card.show { display: block; }
+    .success-emoji { font-size: 4rem; margin-bottom: 1rem; }
+    .success-card h2 {
+      font-family: 'Roboto Slab', serif;
+      color: var(--blue);
+      font-size: 1.7rem;
+      margin-bottom: .75rem;
+    }
+    .success-card p { color: var(--muted); }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.25rem; }
+      .rating-btns { flex-direction: column; }
+      .rbtn { width: 100%; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Rekni nam svuj nazor</h1>
+  <p>Pomoz nam pochopit, co v Ostrove funguje a co je potreba zmenit. Tvuj hlas se pocita.</p>
+  <span class="hero-arrow">&#8595;</span>
+</section>
+
+<main>
+
+  <div class="msg-warning" id="alreadyBanner">
+    Pruzkum jsi jiz vyplnil/a. Dekujeme za zapojeni!
+  </div>
+
+  <div id="formWrap">
+
+    <!-- OTEVRENE OTAZKY -->
+    <div class="card">
+      <h2 class="card-title">
+        <span class="card-icon">&#128172;</span>
+        Tvuj nazor
+      </h2>
+
+      <div class="field">
+        <label for="chybi">Co ti v Ostrove chybi?</label>
+        <textarea id="chybi" placeholder="Napisi, co postrádas – sluzby, infrastrukturu, volnocasove aktivity, kulturu, sport..." rows="4" maxlength="800"></textarea>
+        <div class="char-count" id="chybiCount">0 / 800 znaku</div>
+        <div class="field-error" id="chybiError">Toto pole je povinne.</div>
+      </div>
+
+      <div class="field">
+        <label for="stve">Co te stve? <span class="optional">(nepovinne)</span></label>
+        <textarea id="stve" placeholder="Co ti v Ostrove vadi, co frustruje, co by slo delat lepe..." rows="4" maxlength="800"></textarea>
+        <div class="char-count" id="stveCount">0 / 800 znaku</div>
+      </div>
+    </div>
+
+    <!-- HODNOCENI PROJEKTU -->
+    <div class="card">
+      <h2 class="card-title">
+        <span class="card-icon">&#128203;</span>
+        Hodnoceni projektu
+      </h2>
+      <p class="projects-intro">Jak hodnotis tyto projekty? <span style="opacity:.7">(nepovinne)</span></p>
+      <div id="projektsList"></div>
+    </div>
+
+    <!-- ODESLANI -->
+    <div class="card submit-wrap">
+      <button class="btn-send" id="btnSend" type="button">Odeslat odpoved</button>
+      <div class="spinner" id="spinner"></div>
+      <p class="submit-note">Odpoved je anonymni. Data slouzi vyhradne pro potreby pruzkumu.</p>
+    </div>
+
+  </div><!-- /formWrap -->
+
+  <!-- USPECH -->
+  <div class="card success-card" id="successCard">
+    <div class="success-emoji">&#127881;</div>
+    <h2>Dekujeme za tvuj hlas!</h2>
+    <p>Tvoje odpoved byla odeslana. Vysledky pruzkumu zverejnime po spusteni kampane.</p>
+  </div>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrovaci.cz</a> &ndash; Sdruzeni nezavislych kandidatu s podporou TOP09 a KDU-CSL</p>
+</footer>
+
+<script type="module">
+  import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, addDoc, serverTimestamp }
+                                                  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ════════════════════════════════════════════════════════════
+  // KONFIGURACE FIREBASE
+  // Vyplnte po zalozeni projektu na console.firebase.google.com
+  // ════════════════════════════════════════════════════════════
+  const FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAkdTBkiGyL7ijN-gqpvFOLy3BCAWNscvE",
+    authDomain:        "posli-to-dal-67a9c.firebaseapp.com",
+    projectId:         "posli-to-dal-67a9c",
+    storageBucket:     "posli-to-dal-67a9c.firebasestorage.app",
+    messagingSenderId: "362054947339",
+    appId:             "1:362054947339:web:d51e43c5628b6f03966d0e"
+  };
+
+  // ════════════════════════════════════════════════════════════
+  // SEZNAM PROJEKTU – doplnte nazvy dle volebniho programu
+  // ════════════════════════════════════════════════════════════
+  const PROJEKTY = [
+    { id: "p1", nazev: "Dostavba ZUS" },
+    { id: "p2", nazev: "Satny a zazemi pro zimni stadion" },
+    { id: "p3", nazev: "Sportovni hala" },
+    { id: "p4", nazev: "Volnocasovy areal za klasterem" },
+    { id: "p5", nazev: "Sauna a zazemi koupaliste" },
+    { id: "p6", nazev: "Bezbarierovy pristup na starou radnici" },
+    { id: "p7", nazev: "Vyuziti stare hasicarne pro kreativce" },
+  ];
+
+  // ════════════════════════════════════════════════════════════
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const db  = getFirestore(app);
+
+  // Jeden hlas na prohlizec (localStorage)
+  const DONE_KEY = 'ostrovaci_pruzkum_2026';
+  if (localStorage.getItem(DONE_KEY)) {
+    document.getElementById('alreadyBanner').classList.add('show');
+    document.getElementById('btnSend').disabled = true;
+  }
+
+  // Vykreslit projekty
+  const ratings = {};
+  const listEl  = document.getElementById('projektsList');
+
+  PROJEKTY.forEach(p => {
+    ratings[p.id] = null;
+    const div = document.createElement('div');
+    div.className = 'project-card';
+    div.id = `pc-${p.id}`;
+    div.innerHTML = `
+      <div class="project-name">${p.nazev}</div>
+      <div class="rating-btns">
+        <button class="rbtn" data-id="${p.id}" data-val="up">&#128077; Palec nahoru</button>
+        <button class="rbtn" data-id="${p.id}" data-val="down">&#128078; Palec dolu</button>
+        <button class="rbtn" data-id="${p.id}" data-val="dunno">&#129335; Nevim o tom</button>
+      </div>`;
+    listEl.appendChild(div);
+  });
+
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('.rbtn');
+    if (!btn) return;
+    const { id, val } = btn.dataset;
+    ratings[id] = val;
+    const card = document.getElementById(`pc-${id}`);
+    card.classList.add('rated');
+    card.querySelectorAll('.rbtn').forEach(b =>
+      b.classList.remove('sel-up', 'sel-down', 'sel-dunno'));
+    btn.classList.add(`sel-${val}`);
+  });
+
+  // Pocitadla znaku
+  ['chybi', 'stve'].forEach(id => {
+    const ta  = document.getElementById(id);
+    const cnt = document.getElementById(`${id}Count`);
+    ta.addEventListener('input', () => {
+      cnt.textContent = `${ta.value.length} / 800 znaku`;
+    });
+  });
+
+  // Odeslani
+  document.getElementById('btnSend').addEventListener('click', async () => {
+    const chybi = document.getElementById('chybi').value.trim();
+    const stve  = document.getElementById('stve').value.trim();
+    const errEl = document.getElementById('chybiError');
+
+    if (!chybi) {
+      errEl.classList.add('show');
+      document.getElementById('chybi').focus();
+      return;
+    }
+    errEl.classList.remove('show');
+
+    const btn     = document.getElementById('btnSend');
+    const spinner = document.getElementById('spinner');
+    btn.style.display     = 'none';
+    spinner.classList.add('show');
+
+    try {
+      await addDoc(collection(db, 'pruzkum'), {
+        chybi,
+        stve,
+        projekty:  ratings,
+        timestamp: serverTimestamp(),
+      });
+
+      localStorage.setItem(DONE_KEY, '1');
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('successCard').classList.add('show');
+
+    } catch (err) {
+      console.error(err);
+      spinner.classList.remove('show');
+      btn.style.display = 'inline-block';
+      alert('Chyba pri odesilani. Zkontrolujte pripojeni a zkuste znovu.\n\n' + err.message);
+    }
+  });
+</script>
+
+</body>
+</html>

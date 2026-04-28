@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vysledky pruzkumu | Ostrovaci</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+  <!-- WordCloud2 knihovna -->
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+  <style>
+    :root {
+      --blue:       #0856A4;
+      --blue-dark:  #063d7a;
+      --blue-light: #e8f0fb;
+      --green:      #76B82A;
+      --bg:         #f0f4f9;
+      --white:      #ffffff;
+      --text:       #1a2b3c;
+      --muted:      #5f6b7a;
+      --border:     #cdd8e8;
+      --radius:     14px;
+      --shadow:     0 4px 24px rgba(8,86,164,.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      background: var(--blue);
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+    .logo span { color: #76B82A; }
+    .header-badge {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      padding: .3rem .8rem;
+      border-radius: 20px;
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+
+    /* ── ACCESS DENIED ──────────────────────────── */
+    .gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      padding: 2rem;
+      text-align: center;
+    }
+    .gate-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .gate h2 {
+      font-family: 'Roboto Slab', serif;
+      color: var(--blue);
+      font-size: 1.6rem;
+      margin-bottom: .7rem;
+    }
+    .gate p { color: var(--muted); max-width: 360px; }
+
+    /* ── MAIN ───────────────────────────────────── */
+    main {
+      max-width: 1100px;
+      margin: 2rem auto 3rem;
+      padding: 0 1.25rem;
+    }
+
+    /* ── STATS ROW ──────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Roboto Slab', serif;
+      font-size: 2.2rem;
+      color: var(--blue);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: .25rem;
+    }
+    .stat-label { font-size: .82rem; color: var(--muted); }
+
+    /* ── CARD ───────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1.2rem;
+      color: var(--blue);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .section-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--blue-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .95rem;
+      flex-shrink: 0;
+    }
+
+    /* ── WORD CLOUD GRID ────────────────────────── */
+    .wc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 680px) {
+      .wc-grid { grid-template-columns: 1fr; }
+    }
+    .wc-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+    }
+    .wc-title {
+      font-family: 'Roboto Slab', serif;
+      font-size: 1rem;
+      color: var(--blue);
+      margin-bottom: 1rem;
+    }
+    canvas.wordcloud {
+      width: 100% !important;
+      height: 280px !important;
+      border-radius: 8px;
+    }
+    .wc-empty {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ── NEJCASTEJSI SLOVA (fallback tabulka) ───── */
+    .top-words {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+    .word-pill {
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 20px;
+      padding: .25rem .75rem;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+
+    /* ── PROJECT RATINGS ────────────────────────── */
+    .project-row {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .project-row-name {
+      font-weight: 500;
+      margin-bottom: .6rem;
+    }
+    .bars {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .85rem;
+    }
+    .bar-label {
+      width: 120px;
+      flex-shrink: 0;
+      color: var(--muted);
+    }
+    .bar-track {
+      flex: 1;
+      background: #eef2f8;
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width .6s ease;
+    }
+    .bar-fill.up    { background: #28a745; }
+    .bar-fill.down  { background: #dc3545; }
+    .bar-fill.dunno { background: #e0a800; }
+    .bar-pct {
+      width: 44px;
+      text-align: right;
+      font-weight: 500;
+      font-size: .82rem;
+      color: var(--text);
+    }
+    .bar-count {
+      width: 36px;
+      text-align: right;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    /* ── LOADING ────────────────────────────────── */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 4px solid rgba(8,86,164,.15);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── EXPORT BUTTON ──────────────────────────── */
+    .btn-export {
+      display: inline-block;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1.5px solid var(--blue);
+      padding: .5rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-export:hover { background: var(--blue); color: #fff; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- PRISTUP ODEPREN -->
+<div class="gate" id="accessDenied" style="display:none;">
+  <div class="gate-icon">&#128274;</div>
+  <h2>Pristup odepren</h2>
+  <p>Tato stranka je chranena. Pouzijte odkaz, ktery jste dostali.</p>
+</div>
+
+<!-- NACITANI -->
+<div id="loadingView">
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+      <span class="header-badge">Dashboard</span>
+    </div>
+  </header>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Nacitani dat...</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+      <span class="header-badge">&#128196; Dashboard</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- STATISTIKY -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">–</div>
+        <div class="stat-label">celkem odpovedi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statLastDay">–</div>
+        <div class="stat-label">za posledni 24 hodin</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statWithStve">–</div>
+        <div class="stat-label">vyplnilo "co stve"</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statWithRating">–</div>
+        <div class="stat-label">hodnotilo projekty</div>
+      </div>
+    </div>
+
+    <!-- WORD CLOUDS -->
+    <div class="wc-grid">
+      <div class="wc-card">
+        <div class="wc-title">&#128172; Co ti v Ostrove chybi?</div>
+        <canvas class="wordcloud" id="wcChybi" width="600" height="280"></canvas>
+        <div class="top-words" id="topChybi"></div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-title">&#128545; Co te stve?</div>
+        <canvas class="wordcloud" id="wcStve" width="600" height="280"></canvas>
+        <div class="top-words" id="topStve"></div>
+      </div>
+    </div>
+
+    <!-- HODNOCENI PROJEKTU -->
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128203;</span>
+        Hodnoceni projektu
+      </div>
+      <div id="projektRatings"></div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <strong>Export dat</strong>
+        <p style="font-size:.88rem; color:var(--muted); margin-top:.2rem;">Stahni vsechny odpovedi jako CSV soubor</p>
+      </div>
+      <button class="btn-export" id="btnExport">&#11015;&#65039; Stahni CSV</button>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrovaci.cz</a> &ndash; interni dashboard pruzkumu</p>
+  </footer>
+</div><!-- /dashboard -->
+
+
+<script type="module">
+  import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, getDocs }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ════════════════════════════════════════════════════════════
+  // KONFIGURACE – stejne hodnoty jako v index.html
+  // ════════════════════════════════════════════════════════════
+  const FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAkdTBkiGyL7ijN-gqpvFOLy3BCAWNscvE",
+    authDomain:        "posli-to-dal-67a9c.firebaseapp.com",
+    projectId:         "posli-to-dal-67a9c",
+    storageBucket:     "posli-to-dal-67a9c.firebasestorage.app",
+    messagingSenderId: "362054947339",
+    appId:             "1:362054947339:web:d51e43c5628b6f03966d0e"
+  };
+
+  // ════════════════════════════════════════════════════════════
+  // TOKEN DASHBOARDU – zmente na cokoliv tajneho
+  // URL: /vysledky?token=Ostrovaci2026
+  // ════════════════════════════════════════════════════════════
+  const DASHBOARD_TOKEN = "Ostrovaci2026";
+
+  // ════════════════════════════════════════════════════════════
+  // SEZNAM PROJEKTU – musi odpovidat index.html
+  // ════════════════════════════════════════════════════════════
+  const PROJEKTY = [
+    { id: "p1", nazev: "Dostavba ZUS" },
+    { id: "p2", nazev: "Satny a zazemi pro zimni stadion" },
+    { id: "p3", nazev: "Sportovni hala" },
+    { id: "p4", nazev: "Volnocasovy areal za klasterem" },
+    { id: "p5", nazev: "Sauna a zazemi koupaliste" },
+    { id: "p6", nazev: "Bezbarierovy pristup na starou radnici" },
+    { id: "p7", nazev: "Vyuziti stare hasicarne pro kreativce" },
+  ];
+
+  // ════════════════════════════════════════════════════════════
+  // CZECH STOP WORDS
+  // ════════════════════════════════════════════════════════════
+  const STOP = new Set([
+    'a','aby','aj','ale','anebo','ani','ano','asi','az','atd','atp',
+    'bez','bude','budeme','budete','budou','budu','budes',
+    'byl','byla','bylo','byli','bych','bychom','byste','bys','by',
+    'ci','co','coz',
+    'da','dal','dale','do',
+    'hm','ho',
+    'i','ja','jak','jako','je','jen','jenom','jej','jeho','jeji',
+    'jejich','jemu','jeste','ji','jich','jim','jiz','jo',
+    'jsem','jsi','jsou','jsme','jste',
+    'k','ke','kdo','kde','kdyz','kdy','ktera','ktere','kteri','ktery','kvuli',
+    'li',
+    'ma','mam','mas','me','mi','mit','mne','mnou','moc','muj','my',
+    'na','nad','nam','nas','nase','nasi','ne','nebo','neco','neni','nic','no',
+    'o','od','on','one','oni','ono','ony',
+    'pak','po','pod','pred','pri','pro','proc','proto',
+    'se','si','s','sem','sice','stale','svuj',
+    'ta','tak','take','tam','te','to','tom','tomu','ten','teto',
+    'ti','tim','toho','tu','tuto','ty',
+    'u','uz','v','ve','vice','viz',
+    'vsak','vsechno','vsichni','vubec',
+    'z','za','zde','ze','zda',
+    // Rozsirene
+    'tady','ted','nyni','dnes','zitra','vcera','tehdy',
+    'tedy','takze','totiz','tudiz','protoze','pokud','kdyz',
+    'jestli','prestože','presto','nicmene','avsak','jenze',
+    'kazdy','kazda','kazde','vse','nic','nikdo','nekdo','nekde','nekdy',
+    'nejak','sam','sama','samo','sami',
+    'nad','pod','pri','podle','kvuli','diky','vuci','krome',
+    'mezi','pres','skrz','bez','misto','vedle','kolem',
+    'neni','nejsou','nebyl','nebyla','nebylo','nebyli',
+    'nema','nemas','nemame','nemate','nemaji',
+    'vice','mene','vic','min',
+    'hodne','trochu','malo','velmi','dost','pouze','jeste',
+    // Casova slova
+    'rano','vecer','noc','den','tyden','mesic','rok',
+    // Kratke nicnevypovidajici
+    'ac','af','ah','aj','al','am','an','ar','as','at','au','av','aw','ax','ay',
+    'ba','be','bo','bu',
+    'ca','co',
+    'da','de','di',
+    'eh','er','ev',
+    'ha','he','hi','ht',
+    'ie','if','in','is','it',
+    'jo',
+    'ko',
+    'la','le','li','lo',
+    'ma','mi','mo','mu',
+    'na','ne','ni','no','nu',
+    'oc','ok','on',
+    'pa','pe','pi','po','pu',
+    'qu',
+    'ra','re','ri','ro','ru',
+    'sa','se','si','so','su',
+    'ta','te','ti','to','tu',
+    'ul','um','ur','us','ut',
+    'va','vi','vo',
+    'wa','we','wi',
+    'xe',
+    'ya','ye',
+    'za','ze','zo','zu',
+  ]);
+
+  // ═══════════════════════════════════════════════════
+  // TOKEN CHECK
+  // ═══════════════════════════════════════════════════
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('token') !== DASHBOARD_TOKEN) {
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('accessDenied').style.display = 'flex';
+  } else {
+    initDashboard();
+  }
+
+  async function initDashboard() {
+    const app  = initializeApp(FIREBASE_CONFIG);
+    const db   = getFirestore(app);
+
+    let docs;
+    try {
+      const snap = await getDocs(collection(db, 'pruzkum'));
+      docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (err) {
+      console.error(err);
+      document.querySelector('.loading p').textContent = 'Chyba pri nacitani dat: ' + err.message;
+      return;
+    }
+
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('dashboard').style.display   = 'block';
+
+    // Statistiky
+    const now   = Date.now();
+    const day   = 24 * 60 * 60 * 1000;
+    const total = docs.length;
+    const last24 = docs.filter(d => {
+      if (!d.timestamp) return false;
+      const ts = d.timestamp.toMillis ? d.timestamp.toMillis() : (d.timestamp.seconds * 1000);
+      return (now - ts) < day;
+    }).length;
+    const withStve   = docs.filter(d => d.stve && d.stve.trim()).length;
+    const withRating = docs.filter(d =>
+      d.projekty && Object.values(d.projekty).some(v => v !== null)
+    ).length;
+
+    document.getElementById('statTotal').textContent    = total;
+    document.getElementById('statLastDay').textContent  = last24;
+    document.getElementById('statWithStve').textContent = withStve;
+    document.getElementById('statWithRating').textContent = withRating;
+
+    // Word cloudy
+    renderWordCloud(docs, 'chybi', 'wcChybi', 'topChybi');
+    renderWordCloud(docs, 'stve',  'wcStve',  'topStve');
+
+    // Hodnoceni projektu
+    renderProjectRatings(docs);
+
+    // CSV export
+    document.getElementById('btnExport').addEventListener('click', () => exportCSV(docs));
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // WORD CLOUD
+  // ════════════════════════════════════════════════════════════
+  function tokenize(text) {
+    return text
+      .toLowerCase()
+      .replace(/[^\wáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length >= 3 && !STOP.has(w));
+  }
+
+  function buildFrequency(docs, field) {
+    const freq = {};
+    docs.forEach(d => {
+      if (!d[field]) return;
+      tokenize(d[field]).forEach(w => {
+        freq[w] = (freq[w] || 0) + 1;
+      });
+    });
+    return Object.entries(freq)
+      .sort((a, b) => b[1] - a[1]);
+  }
+
+  function renderWordCloud(docs, field, canvasId, topId) {
+    const freq   = buildFrequency(docs, field);
+    const canvas = document.getElementById(canvasId);
+    const topEl  = document.getElementById(topId);
+
+    if (freq.length === 0) {
+      canvas.style.display = 'none';
+      topEl.innerHTML = '<span style="color:var(--muted);font-size:.9rem">Zatim zadne odpovedi.</span>';
+      return;
+    }
+
+    const top30 = freq.slice(0, 30);
+
+    // Top pills (vždy viditelné)
+    top30.slice(0, 15).forEach(([w, c]) => {
+      const pill = document.createElement('span');
+      pill.className = 'word-pill';
+      pill.textContent = `${w} (${c})`;
+      topEl.appendChild(pill);
+    });
+
+    // Word cloud (pokud WordCloud dostupny)
+    if (typeof WordCloud === 'function') {
+      const maxW = canvas.offsetWidth || 400;
+      WordCloud(canvas, {
+        list:         top30,
+        gridSize:     Math.round(8 * maxW / 600),
+        weightFactor: size => Math.pow(size, 1.4) * maxW / 220,
+        fontFamily:   "'Roboto', sans-serif",
+        color:        () => {
+          const palette = ['#0856A4', '#1a5fa0', '#76B82A', '#063d7a', '#1a6fc8'];
+          return palette[Math.floor(Math.random() * palette.length)];
+        },
+        rotateRatio:     0.15,
+        backgroundColor: '#ffffff',
+        minSize:         10,
+      });
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // PROJECT RATINGS
+  // ════════════════════════════════════════════════════════════
+  function renderProjectRatings(docs) {
+    const el = document.getElementById('projektRatings');
+
+    PROJEKTY.forEach(p => {
+      const counts = { up: 0, down: 0, dunno: 0 };
+      docs.forEach(d => {
+        if (d.projekty && d.projekty[p.id]) {
+          const v = d.projekty[p.id];
+          if (counts[v] !== undefined) counts[v]++;
+        }
+      });
+      const total = counts.up + counts.down + counts.dunno;
+
+      const pct = v => total ? Math.round((counts[v] / total) * 100) : 0;
+
+      const div = document.createElement('div');
+      div.className = 'project-row';
+      div.innerHTML = `
+        <div class="project-row-name">${p.nazev}</div>
+        <div class="bars">
+          ${barRow('up',    '&#128077; Palec nahoru', pct('up'),    counts.up)}
+          ${barRow('down',  '&#128078; Palec dolu',   pct('down'),  counts.down)}
+          ${barRow('dunno', '&#129335; Nevim o tom',  pct('dunno'), counts.dunno)}
+        </div>
+        <div style="font-size:.78rem; color:var(--muted); margin-top:.4rem;">
+          Celkem hodnoceni: <strong>${total}</strong>
+        </div>`;
+      el.appendChild(div);
+    });
+  }
+
+  function barRow(type, label, pct, count) {
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${label}</div>
+        <div class="bar-track"><div class="bar-fill ${type}" style="width:${pct}%"></div></div>
+        <div class="bar-pct">${pct}%</div>
+        <div class="bar-count">(${count})</div>
+      </div>`;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // CSV EXPORT
+  // ════════════════════════════════════════════════════════════
+  function exportCSV(docs) {
+    const projHeaders = PROJEKTY.map(p => p.id).join(',');
+    const projNames   = PROJEKTY.map(p => `"${p.nazev}"`).join(',');
+    const rows = [
+      `"ID","Chybi","Stve",${projNames},"Timestamp"`,
+    ];
+    docs.forEach(d => {
+      const ts = d.timestamp
+        ? (d.timestamp.toDate ? d.timestamp.toDate().toISOString() : new Date(d.timestamp.seconds * 1000).toISOString())
+        : '';
+      const projVals = PROJEKTY.map(p =>
+        `"${(d.projekty && d.projekty[p.id]) || ''}"`
+      ).join(',');
+      rows.push(`"${d.id}","${escape(d.chybi)}","${escape(d.stve)}",${projVals},"${ts}"`);
+    });
+
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `ostrovaci-pruzkum-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escape(str) {
+    return (str || '').replace(/"/g, '""').replace(/\n/g, ' ');
+  }
+</script>
+
+</body>
+</html>
