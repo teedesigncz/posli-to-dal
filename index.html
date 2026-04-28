@@ -346,20 +346,20 @@
 
 <header>
   <div class="header-inner">
-    <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrovaci<span>.cz</span></a>
+    <a class="logo" href="https://www.ostrovaci.cz" target="_blank">Ostrováci<span>.cz</span></a>
   </div>
 </header>
 
 <section class="hero">
-  <h1>Rekni nam svuj nazor</h1>
-  <p>Pomoz nam pochopit, co v Ostrove funguje a co je potreba zmenit. Tvuj hlas se pocita.</p>
+  <h1>Řekni nám svůj názor</h1>
+  <p>Pomož nám pochopit, co v Ostrově funguje a co je potřeba změnit. Tvůj hlas se počítá.</p>
   <span class="hero-arrow">&#8595;</span>
 </section>
 
 <main>
 
   <div class="msg-warning" id="alreadyBanner">
-    Pruzkum jsi jiz vyplnil/a. Dekujeme za zapojeni!
+    Průzkum jsi již vyplnil/a. Děkujeme za zapojení!
   </div>
 
   <div id="formWrap">
@@ -368,7 +368,7 @@
     <div class="card">
       <h2 class="card-title">
         <span class="card-icon">&#128100;</span>
-        Par otazek o tobe
+        Pár otázek o tobě
       </h2>
 
       <div class="field">
@@ -379,22 +379,22 @@
           <input type="radio" name="zOstrova" id="zOstrova-ne" value="ne">
           <label for="zOstrova-ne">Ne</label>
         </div>
-        <div class="field-error" id="zOstrovaError">Prosim vyberte moznost.</div>
+        <div class="field-error" id="zOstrovaError">Prosím vyberte možnost.</div>
       </div>
 
       <div class="field" style="margin-bottom:0;">
-        <label>Ke ktere generaci patris?</label>
+        <label>Ke které generaci patříš?</label>
         <div class="radio-group">
           <input type="radio" name="generace" id="gen-z" value="Gen Z (nar. 1997-2012)">
           <label for="gen-z">Gen Z (nar. 1997–2012)</label>
-          <input type="radio" name="generace" id="gen-m" value="Milennial (nar. 1981-1996)">
-          <label for="gen-m">Milennial (nar. 1981–1996)</label>
+          <input type="radio" name="generace" id="gen-m" value="Mileniál (nar. 1981-1996)">
+          <label for="gen-m">Mileniál (nar. 1981–1996)</label>
           <input type="radio" name="generace" id="gen-x" value="Gen X (nar. 1965-1980)">
           <label for="gen-x">Gen X (nar. 1965–1980)</label>
-          <input type="radio" name="generace" id="gen-b" value="Boomer (nar. pred 1965)">
+          <input type="radio" name="generace" id="gen-b" value="Boomer (nar. před 1965)">
           <label for="gen-b">Boomer (nar. před 1965)</label>
         </div>
-        <div class="field-error" id="generaceError">Prosim vyberte moznost.</div>
+        <div class="field-error" id="generaceError">Prosím vyberte možnost.</div>
       </div>
     </div>
 
@@ -402,20 +402,20 @@
     <div class="card">
       <h2 class="card-title">
         <span class="card-icon">&#128172;</span>
-        Tvuj nazor
+        Tvůj názor
       </h2>
 
       <div class="field">
-        <label for="chybi">Co ti v Ostrove chybi?</label>
-        <textarea id="chybi" placeholder="Napisi, co postrádas – sluzby, infrastrukturu, volnocasove aktivity, kulturu, sport..." rows="4" maxlength="800"></textarea>
-        <div class="char-count" id="chybiCount">0 / 800 znaku</div>
-        <div class="field-error" id="chybiError">Toto pole je povinne.</div>
+        <label for="chybi">Co ti v Ostrově chybí?</label>
+        <textarea id="chybi" placeholder="Napiš, co postrádáš – služby, infrastrukturu, volnočasové aktivity, kulturu, sport..." rows="4" maxlength="800"></textarea>
+        <div class="char-count" id="chybiCount">0 / 800 znaků</div>
+        <div class="field-error" id="chybiError">Toto pole je povinné.</div>
       </div>
 
       <div class="field">
-        <label for="stve">Co te stve? <span class="optional">(nepovinne)</span></label>
-        <textarea id="stve" placeholder="Co ti v Ostrove vadi, co frustruje, co by slo delat lepe..." rows="4" maxlength="800"></textarea>
-        <div class="char-count" id="stveCount">0 / 800 znaku</div>
+        <label for="stve">Co tě štve? <span class="optional">(nepovinné)</span></label>
+        <textarea id="stve" placeholder="Co ti v Ostrově vadí, co frustruje, co by šlo dělat lépe..." rows="4" maxlength="800"></textarea>
+        <div class="char-count" id="stveCount">0 / 800 znaků</div>
       </div>
     </div>
 
@@ -423,17 +423,17 @@
     <div class="card">
       <h2 class="card-title">
         <span class="card-icon">&#128203;</span>
-        Hodnoceni projektu
+        Hodnocení projektů
       </h2>
-      <p class="projects-intro">Jak hodnotis tyto projekty? <span style="opacity:.7">(nepovinne)</span></p>
+      <p class="projects-intro">Jak hodnotíš tyto projekty? <span style="opacity:.7">(nepovinné)</span></p>
       <div id="projektsList"></div>
     </div>
 
     <!-- ODESLANI -->
     <div class="card submit-wrap">
-      <button class="btn-send" id="btnSend" type="button">Odeslat odpoved</button>
+      <button class="btn-send" id="btnSend" type="button">Odeslat odpověď</button>
       <div class="spinner" id="spinner"></div>
-      <p class="submit-note">Odpoved je anonymni. Data slouzi vyhradne pro potreby pruzkumu.</p>
+      <p class="submit-note">Odpověď je anonymní. Data slouží výhradně pro potřeby průzkumu.</p>
     </div>
 
   </div><!-- /formWrap -->
@@ -441,14 +441,14 @@
   <!-- USPECH -->
   <div class="card success-card" id="successCard">
     <div class="success-emoji">&#127881;</div>
-    <h2>Dekujeme za tvuj hlas!</h2>
-    <p>Tvoje odpoved byla odeslana. Vysledky pruzkumu zverejnime po spusteni kampane.</p>
+    <h2>Děkujeme za tvůj hlas!</h2>
+    <p>Tvoje odpověď byla odeslána. Výsledky průzkumu zveřejníme po spuštění kampaně.</p>
   </div>
 
 </main>
 
 <footer>
-  <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrovaci.cz</a> &ndash; Sdruzeni nezavislych kandidatu s podporou TOP09 a KDU-CSL</p>
+  <p>&copy; 2026 <a href="https://www.ostrovaci.cz" target="_blank">Ostrováci.cz</a> &ndash; Sdružení nezávislých kandidátů s podporou TOP09 a KDU-ČSL</p>
 </footer>
 
 <script type="module">
@@ -473,13 +473,13 @@
   // SEZNAM PROJEKTU – doplnte nazvy dle volebniho programu
   // ════════════════════════════════════════════════════════════
   const PROJEKTY = [
-    { id: "p1", nazev: "Dostavba ZUS" },
-    { id: "p2", nazev: "Satny a zazemi pro zimni stadion" },
-    { id: "p3", nazev: "Sportovni hala" },
-    { id: "p4", nazev: "Volnocasovy areal za klasterem" },
-    { id: "p5", nazev: "Sauna a zazemi koupaliste" },
-    { id: "p6", nazev: "Bezbarierovy pristup na starou radnici" },
-    { id: "p7", nazev: "Vyuziti stare hasicarne pro kreativce" },
+    { id: "p1", nazev: "Dostavba ZUŠ" },
+    { id: "p2", nazev: "Šatny a zázemí pro zimní stadion" },
+    { id: "p3", nazev: "Sportovní hala" },
+    { id: "p4", nazev: "Volnočasový areál za klášterem" },
+    { id: "p5", nazev: "Sauna a zázemí koupaliště" },
+    { id: "p6", nazev: "Bezbariérový přístup na starou radnici" },
+    { id: "p7", nazev: "Využití staré hasičárny pro kreativce" },
   ];
 
   // ════════════════════════════════════════════════════════════
@@ -507,8 +507,8 @@
       <div class="project-name">${p.nazev}</div>
       <div class="rating-btns">
         <button class="rbtn" data-id="${p.id}" data-val="up">&#128077; Palec nahoru</button>
-        <button class="rbtn" data-id="${p.id}" data-val="down">&#128078; Palec dolu</button>
-        <button class="rbtn" data-id="${p.id}" data-val="dunno">&#129335; Nevim o tom</button>
+        <button class="rbtn" data-id="${p.id}" data-val="down">&#128078; Palec dolů</button>
+        <button class="rbtn" data-id="${p.id}" data-val="dunno">&#129335; Nevím o tom</button>
       </div>`;
     listEl.appendChild(div);
   });
@@ -530,7 +530,7 @@
     const ta  = document.getElementById(id);
     const cnt = document.getElementById(`${id}Count`);
     ta.addEventListener('input', () => {
-      cnt.textContent = `${ta.value.length} / 800 znaku`;
+      cnt.textContent = `${ta.value.length} / 800 znaků`;
     });
   });
 
@@ -580,7 +580,7 @@
       console.error(err);
       spinner.classList.remove('show');
       btn.style.display = 'inline-block';
-      alert('Chyba pri odesilani. Zkontrolujte pripojeni a zkuste znovu.\n\n' + err.message);
+      alert('Chyba při odesílání. Zkontrolujte připojení a zkuste znovu.\n\n' + err.message);
     }
   });
 </script>
