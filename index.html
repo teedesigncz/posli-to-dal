@@ -450,6 +450,29 @@
     }
     .radio-group label:hover { border-color: var(--blue); }
 
+    /* ── POPIS PROJEKTU ────────────────────────── */
+    .proj-desc-toggle {
+      display: inline-block;
+      font-size: .82rem;
+      color: var(--blue);
+      cursor: pointer;
+      margin-bottom: .65rem;
+      user-select: none;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .proj-desc {
+      display: none;
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: .65rem .85rem;
+      background: var(--blue-light);
+      border-radius: 8px;
+      margin-bottom: .7rem;
+    }
+    .proj-desc.open { display: block; }
+
     @media (max-width: 480px) {
       .card { padding: 1.25rem; }
       .rating-btns { flex-direction: column; }
@@ -641,7 +664,7 @@
   // SEZNAM PROJEKTU – doplnte nazvy dle volebniho programu
   // ════════════════════════════════════════════════════════════
   const PROJEKTY = [
-    { id: "p1", nazev: "Dostavba ZUŠ" },
+    { id: "p1", nazev: "Dostavba ZUŠ", popis: "Město Ostrov schválilo přístavbu Základní umělecké školy s novým koncertním sálem a moderními výukovými prostorami. Projekt se řeší již od roku 2015 a jeho cílem je sloučit všechny obory ZUŠ pod jednu střechu – včetně přesunu literárně dramatického oboru z detašovaného pracoviště. Náklady jsou odhadovány na cca 190 milionů korun." },
     { id: "p2", nazev: "Šatny a zázemí pro zimní stadion" },
     { id: "p3", nazev: "Sportovní hala" },
     { id: "p4", nazev: "Volnočasový areál za klášterem" },
@@ -673,6 +696,7 @@
     div.id = `pc-${p.id}`;
     div.innerHTML = `
       <div class="project-name">${p.nazev}</div>
+      ${p.popis ? `<span class="proj-desc-toggle" data-desc="${p.id}">Popis projektu ▼</span><div class="proj-desc" id="desc-${p.id}">${p.popis}</div>` : ''}
       <div class="rating-btns">
         <button class="rbtn" data-id="${p.id}" data-val="up">&#128077; Palec nahoru</button>
         <button class="rbtn" data-id="${p.id}" data-val="down">&#128078; Palec dolů</button>
@@ -682,6 +706,13 @@
   });
 
   listEl.addEventListener('click', e => {
+    const toggle = e.target.closest('.proj-desc-toggle');
+    if (toggle) {
+      const desc = document.getElementById(`desc-${toggle.dataset.desc}`);
+      const open = desc.classList.toggle('open');
+      toggle.textContent = `Popis projektu ${open ? '▲' : '▼'}`;
+      return;
+    }
     const btn = e.target.closest('.rbtn');
     if (!btn) return;
     const { id, val } = btn.dataset;
