@@ -585,6 +585,19 @@
       <div id="projektsList"></div>
     </div>
 
+    <!-- NAVRH PROJEKTU -->
+    <div class="card">
+      <h2 class="card-title">
+        <span class="card-icon">&#128161;</span>
+        Jaký projekt ti tu chybí?
+      </h2>
+      <div class="field" style="margin-bottom:0;">
+        <label for="navrhProjektu">Popiš svůj návrh <span class="optional">(nepovinné)</span></label>
+        <textarea id="navrhProjektu" placeholder="Napiš, jaký projekt nebo investici bys v Ostrově uvítal/a..." rows="4" maxlength="800"></textarea>
+        <div class="char-count" id="navrhCount">0 / 800 znaků</div>
+      </div>
+    </div>
+
     <!-- ODESLANI -->
     <div class="card submit-wrap">
       <button class="btn-send" id="btnSend" type="button">Odeslat odpověď</button>
@@ -725,7 +738,7 @@
   });
 
   // Pocitadla znaku
-  ['chybi', 'stve'].forEach(id => {
+  ['chybi', 'stve', 'navrhProjektu'].forEach(id => {
     const ta  = document.getElementById(id);
     const cnt = document.getElementById(`${id}Count`);
     ta.addEventListener('input', () => {
@@ -735,8 +748,9 @@
 
   // Odeslani
   document.getElementById('btnSend').addEventListener('click', async () => {
-    const chybi    = document.getElementById('chybi').value.trim();
-    const stve     = document.getElementById('stve').value.trim();
+    const chybi         = document.getElementById('chybi').value.trim();
+    const stve          = document.getElementById('stve').value.trim();
+    const navrhProjektu = document.getElementById('navrhProjektu').value.trim();
     const zOstrova = document.querySelector('input[name="zOstrova"]:checked')?.value || null;
     const generace = document.querySelector('input[name="generace"]:checked')?.value || null;
 
@@ -767,6 +781,7 @@
         generace,
         chybi,
         stve,
+        navrhProjektu,
         projekty:  ratings,
         timestamp: serverTimestamp(),
       });

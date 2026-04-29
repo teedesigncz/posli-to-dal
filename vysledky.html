@@ -467,6 +467,15 @@
       <div id="projektRatings"></div>
     </div>
 
+    <!-- NAVRHOVANÉ PROJEKTY -->
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128161;</span>
+        Další navrhované projekty
+      </div>
+      <div id="navrhyProjektu"></div>
+    </div>
+
     <!-- EXPORT + VYČISTIT -->
     <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
       <div>
@@ -703,6 +712,24 @@
     // Hodnocení projektů
     renderProjectRatings(docs);
 
+    // Navrhované projekty
+    const navrhy = docs.filter(d => d.navrhProjektu && d.navrhProjektu.trim());
+    const navrhEl = document.getElementById('navrhyProjektu');
+    if (navrhy.length === 0) {
+      navrhEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Zatím žádné návrhy.</p>';
+    } else {
+      navrhy.forEach((d, i) => {
+        const ts = d.timestamp
+          ? new Date(d.timestamp.toMillis ? d.timestamp.toMillis() : d.timestamp.seconds * 1000).toLocaleDateString('cs-CZ')
+          : '';
+        navrhEl.innerHTML += `
+          <div style="padding:.85rem 1rem; border:1.5px solid var(--border); border-radius:10px; margin-bottom:.65rem; background:var(--bg);">
+            <div style="font-size:.78rem; color:var(--muted); margin-bottom:.35rem;">#${i+1} &nbsp;·&nbsp; ${d.generace || '–'} &nbsp;·&nbsp; ${d.zOstrova === 'ano' ? 'z Ostrova' : 'odjinud'} &nbsp;·&nbsp; ${ts}</div>
+            <div style="font-size:.95rem; color:var(--text);">${d.navrhProjektu.replace(/\n/g, '<br>')}</div>
+          </div>`;
+      });
+    }
+
     // CSV export
     document.getElementById('btnExport').addEventListener('click', () => exportCSV(docs));
 
@@ -849,7 +876,7 @@
   function exportCSV(docs) {
     const projNames = PROJEKTY.map(p => `"${p.nazev}"`).join(',');
     const rows = [
-      `"ID","Z Ostrova","Generace","Chybí","Štve",${projNames},"Timestamp"`,
+      `"ID","Z Ostrova","Generace","Chybí","Štve","Návrh projektu",${projNames},"Timestamp"`,
     ];
     docs.forEach(d => {
       const ts = d.timestamp
@@ -858,7 +885,7 @@
       const projVals = PROJEKTY.map(p =>
         `"${(d.projekty && d.projekty[p.id]) || ''}"`
       ).join(',');
-      rows.push(`"${d.id}","${d.zOstrova || ''}","${escape(d.generace)}","${escape(d.chybi)}","${escape(d.stve)}",${projVals},"${ts}"`);
+      rows.push(`"${d.id}","${d.zOstrova || ''}","${escape(d.generace)}","${escape(d.chybi)}","${escape(d.stve)}","${escape(d.navrhProjektu)}",${projVals},"${ts}"`);
     });
 
     const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
